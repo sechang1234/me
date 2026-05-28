@@ -62,4 +62,20 @@ elif st.session_state.stage == "ready":
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-elif
+elif st.session_state.stage == "result":
+    st.write(f"### 결과: {st.session_state.reaction_time} ms")
+    if st.session_state.reaction_time < 200:
+        st.success("인간계를 초월한 속도입니다!")
+    elif st.session_state.reaction_time < 300:
+        st.info("평균 이상입니다! 빠르시네요.")
+    else:
+        st.warning("조금 더 집중해 볼까요?")
+    if st.button("다시 도전하기"):
+        st.session_state.stage = "waiting"
+        st.rerun()
+
+elif st.session_state.stage == "foul":
+    st.error("너무 빨랐습니다! 초록색 불이 켜지면 누르세요.")
+    if st.button("다시 도전하기"):
+        st.session_state.stage = "waiting"
+        st.rerun()
