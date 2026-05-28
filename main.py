@@ -2,19 +2,18 @@ import streamlit as st
 import time
 import random
 
-# 페이지 설정
+# 1. 페이지 초기 설정
 st.set_page_config(page_title="반응속도 테스트", layout="centered")
-
-st.title("반응속도 테스트")
+st.title("⚡ 반응속도 테스트")
 st.write("빨간색 화면이 초록색으로 바뀌면 최대한 빨리 클릭하세요!")
 
-# 세션 상태 변수 초기화
+# 2. 세션 상태(데이터 기억) 초기화
 if "stage" not in st.session_state:
     st.session_state.stage = "home"
 if "start_time" not in st.session_state:
     st.session_state.start_time = 0.0
 
-# --- CSS 스타일 ---
+# 3. 화면을 큼직하게 채워줄 확실한 CSS 스타일
 st.markdown("""
     <style>
     div.stButton > button {
@@ -31,7 +30,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 게임 로직 시작 ---
+# 4. 게임 핵심 로직 (왼쪽 벽에 딱 붙여서 에러 방지)
 if st.session_state.stage == "home":
     st.markdown('<div class="css-home">', unsafe_allow_html=True)
     if st.button("시작하려면 클릭 (파란색)"):
@@ -46,13 +45,14 @@ elif st.session_state.stage == "waiting":
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
     
+    # 2초 ~ 4초 사이 랜덤 대기 후 초록불로 전환
     delay = random.uniform(2.0, 4.0)
     time.sleep(delay)
-    
     st.session_state.stage = "ready"
     st.session_state.start_time = time.time()
     st.rerun()
-    elif st.session_state.stage == "ready":
+
+elif st.session_state.stage == "ready":
     st.markdown('<div class="css-ready">', unsafe_allow_html=True)
     if st.button("지금 클릭하세요 (초록색)"):
         end_time = time.time()
@@ -62,21 +62,4 @@ elif st.session_state.stage == "waiting":
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-elif st.session_state.stage == "result":
-    st.write(f"### 결과: {st.session_state.reaction_time} ms")
-    if st.session_state.reaction_time < 200:
-        st.success("인간계를 초월한 속도입니다!")
-    elif st.session_state.reaction_time < 300:
-        st.info("평균 이상입니다! 빠르시네요.")
-    else:
-        st.warning("조금 더 집중해 볼까요?")
-
-    if st.button("다시 도전하기"):
-        st.session_state.stage = "waiting"
-        st.rerun()
-
-elif st.session_state.stage == "foul":
-    st.error("너무 빨랐습니다! 초록색 불이 켜지면 누르세요.")
-    if st.button("다시 도전하기"):
-        st.session_state.stage = "waiting"
-        st.rerun()
+elif
