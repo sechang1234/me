@@ -53,4 +53,4 @@ elif st.session_state.stage == "waiting":
     if st.button("초록색이 되면 클릭하세요! (지금은 빨간색)"):
         st.session_state.stage = "foul"
         st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True
+    st.markdown('</div>', unsafe_allow_html=True)
