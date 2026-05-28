@@ -14,37 +14,24 @@ if "stage" not in st.session_state:
 if "start_time" not in st.session_state:
     st.session_state.start_time = 0.0
 
-# --- 선명하고 진한 색상을 위한 CSS 스타일 고도화 ---
+# --- 선명하고 진한 색상을 위한 CSS 스타일 ---
 st.markdown("""
     <style>
-    /* 기본 버튼 스타일 리셋 및 강화 */
     div.stButton > button {
         width: 100% !important;
         height: 350px !important;
         font-size: 40px !important;
         font-weight: 900 !important;
-        color: #FFFFFF !important; /* 무조건 흰색 글씨 */
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* 글씨 그림자로 가시성 확보 */
+        color: #FFFFFF !important;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         border-radius: 20px !important;
-        border: 5px solid #FFFFFF !important; /* 테두리 흰색 선명하게 */
+        border: 5px solid #FFFFFF !important;
         box-shadow: 0px 10px 20px rgba(0,0,0,0.3) !important;
-        transition: none !important;
     }
     
-    /* 1. 시작 화면 (진한 파란색) */
-    .css-home div.stButton > button {
-        background-color: #1E3A8A !important; 
-    }
-    
-    /* 2. 대기 화면 (강렬한 빨간색) */
-    .css-waiting div.stButton > button {
-        background-color: #DC2626 !important; 
-    }
-    
-    /* 3. 클릭 화면 (선명한 초록색) */
-    .css-ready div.stButton > button {
-        background-color: #16A34A !important; 
-    }
+    .css-home div.stButton > button { background-color: #1E3A8A !important; }
+    .css-waiting div.stButton > button { background-color: #DC2626 !important; }
+    .css-ready div.stButton > button { background-color: #16A34A !important; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -56,4 +43,53 @@ if st.session_state.stage == "home":
     if st.button("시작하려면 클릭 (파란색)"):
         st.session_state.stage = "waiting"
         st.rerun()
-    st.
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# 2. 대기 화면 (빨간불)
+elif st.session_state.stage == "waiting":
+    st.markdown('<div class="css-waiting">', unsafe_allow_html=True)
+    if st.button("아직 누르지 마세요! (빨간색)"):
+        st.session_state.stage = "foul"
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # 랜덤 대기 (2초 ~ 4초)
+    delay = random.uniform(2.0, 4.0)
+    time.sleep(delay)
+    
+    # 초록불로 전환
+    st.session_state.stage = "ready"
+    st.session_state.start_time = time.time()
+    st.rerun()
+
+# 3. 초록불 화면 (클릭!)
+elif st.session_state.stage == "ready":
+    st.markdown('<div class="css-ready">', unsafe_allow_html=True)
+    if st.button("지금 클릭하세요!!! (초록색)"):
+        end_time = time.time()
+        reaction_time = (end_time - st.session_state.start_time) * 1000
+        st.session_state.reaction_time = int(reaction_time)
+        st.session_state.stage = "result"
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# 4. 결과 화면
+elif st.session_state.stage == "result":
+    st.markdown(f"## 🎯 결과: **{st.session_state.reaction_time} ms**")
+    
+    if st.session_state.reaction_time < 200:
+        st.balloons()
+        st.success("🏃‍♂️ 인간계를 초월한 속도입니다!")
+    elif st.session_state.reaction_time < 300:
+        st.info("👍 평균 이상! 아주 빠릅니다.")
+    else:
+        st.warning("🐢 조금 더 집중해 볼까요?")
+
+    if st.button("🔄 다시 도전하기"):
+        st.session_state.stage = "waiting"
+        st.rerun()
+
+# 5. 부정 클릭 화면
+elif st.session_state.stage == "foul":
+    st.error("⚠️ 너무 빨랐습니다! 초록색 불이 켜지면 누르세요.")
+    if st.button("🔄
