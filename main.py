@@ -14,7 +14,7 @@ if "stage" not in st.session_state:
 if "start_time" not in st.session_state:
     st.session_state.start_time = 0.0
 
-# --- 단순하고 확실한 CSS 스타일 ---
+# --- CSS 스타일 ---
 st.markdown("""
     <style>
     div.stButton > button {
@@ -31,9 +31,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 게임 로직 ---
-
-# 1. 시작 화면
+# --- 게임 로직 시작 ---
 if st.session_state.stage == "home":
     st.markdown('<div class="css-home">', unsafe_allow_html=True)
     if st.button("시작하려면 클릭 (파란색)"):
@@ -41,7 +39,6 @@ if st.session_state.stage == "home":
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-# 2. 대기 화면 (빨간불)
 elif st.session_state.stage == "waiting":
     st.markdown('<div class="css-waiting">', unsafe_allow_html=True)
     if st.button("아직 누르지 마세요 (빨간색)"):
@@ -49,16 +46,13 @@ elif st.session_state.stage == "waiting":
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # 랜덤 대기 시간 (2초 ~ 4초)
     delay = random.uniform(2.0, 4.0)
     time.sleep(delay)
     
     st.session_state.stage = "ready"
     st.session_state.start_time = time.time()
     st.rerun()
-
-# 3. 초록불 화면 (클릭!)
-elif st.session_state.stage == "ready":
+    elif st.session_state.stage == "ready":
     st.markdown('<div class="css-ready">', unsafe_allow_html=True)
     if st.button("지금 클릭하세요 (초록색)"):
         end_time = time.time()
@@ -68,10 +62,8 @@ elif st.session_state.stage == "ready":
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-# 4. 결과 화면
 elif st.session_state.stage == "result":
     st.write(f"### 결과: {st.session_state.reaction_time} ms")
-    
     if st.session_state.reaction_time < 200:
         st.success("인간계를 초월한 속도입니다!")
     elif st.session_state.reaction_time < 300:
@@ -83,5 +75,8 @@ elif st.session_state.stage == "result":
         st.session_state.stage = "waiting"
         st.rerun()
 
-# 5. 부정 클릭 화면
-elif st.session_
+elif st.session_state.stage == "foul":
+    st.error("너무 빨랐습니다! 초록색 불이 켜지면 누르세요.")
+    if st.button("다시 도전하기"):
+        st.session_state.stage = "waiting"
+        st.rerun()
